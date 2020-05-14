@@ -1,14 +1,20 @@
-## TODO: Error Handling 
-## TODO: Databases 
-
 import pdb
+#pdb.set_trace()
 import os
+import pickle 
+
+file_name = 'programming.pkl'
 
 def main():
     todo_list = ToDoList()
 
+    try:
+        with open(file_name, 'rb+') as output:
+            new_lst1 = pickle.load(output)
+    except EOFError:
+        new_lst1 = []
+
     while(True):
-        clear_screen()
         todo_list.show_task()
         print("\n")
         print(asterisk_message(60, 8,
@@ -22,10 +28,20 @@ def main():
         print("\n")
         choose = int(input())
         print("\n")
-        
+
+        acceptable_commands=[1,2,3]
+
+        if choose not in acceptable_commands:
+            print("Please type in 1, 2 or 3")
+            print("Press any key to continue")
+            choice = input()
+            if choice != None:
+                clear_screen()
+                continue
+
         if choose ==1: 
             print("> Give me the task:")
-            taskname = input()
+            taskname = str(input())
             print("\n")
             print("> Give me the priority:\n")
             priority = int(input())
@@ -33,6 +49,11 @@ def main():
             clear_screen()
             tmp_task1 = Task(taskname, priority, complete="N")
             todo_list.new_task_new(priority, tmp_task1)
+            new_new_lst = new_lst1 + todo_list.tasks
+
+            with open(file_name, 'wb+') as output:
+                pickle.dump(new_new_lst, output)
+            
 
         elif choose==2:
             print(">Please input the index of the task")
@@ -47,6 +68,8 @@ def main():
             clear_screen()
             lists= todo_list.tasks
             del lists[delete]
+        
+        clear_screen()
 
 # From: https://stackoverflow.com/questions/52650641/how-make-a-box-or-rectangle-from-asterisks-using-for-loops-in-python
 def asterisk_box(width, height):
@@ -81,19 +104,25 @@ class Task:
 class ToDoList:
     def __init__(self):
         self.tasks = []
-
+        
     def new_task_new(self,priority_,task):
         self.tasks.insert(priority_, task)
 
     def show_task(self):
-        tasks = self.tasks
-        num_tasks=len(self.tasks)
+        try:
+            with open(file_name, 'rb') as output:
+                new_list = pickle.load(output)
+        except EOFError:
+            new_list = []
+
+        num_tasks=len(new_list)
         print('You have {} task to do today'.format(num_tasks))
-        for task in tasks:
+        for task in new_list:
             print('[{}] {}'.format(task.complete,task.task_name))
 
 
-if __name__ == '__main__': main()
+if __name__ == '__main__': 
+    main()
 
 
 
