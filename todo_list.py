@@ -58,16 +58,22 @@ def main():
         elif choose==2:
             print(">Please input the index of the task")
             index=int(input())
+            #pdb.set_trace()
             clear_screen()
-            complete_task = todo_list.tasks[index]
+            new_lst2 = todo_list.tasks + new_lst1
+            complete_task = new_lst2[index]
             complete_task.complete = "Y"
+            with open (file_name, 'wb+') as output:
+                pickle.dump(new_lst2, output)
 
         else:
             print("> Please input the index of the task you want to delete")
             delete=int(input())
             clear_screen()
-            lists= todo_list.tasks
+            lists= todo_list.tasks + new_lst1
             del lists[delete]
+            with open (file_name,'wb+') as output:
+                pickle.dump(lists,output)
         
         clear_screen()
 
@@ -120,9 +126,5 @@ class ToDoList:
         for task in new_list:
             print('[{}] {}'.format(task.complete,task.task_name))
 
-
 if __name__ == '__main__': 
     main()
-
-
-
